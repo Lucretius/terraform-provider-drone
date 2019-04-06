@@ -3,7 +3,7 @@ name: default
 
 steps:
 - name: test
-  image: golang:1.12
+  image: golang:1.12.1-alpine3.9
   environment:
     TF_ACC: 1
     GO111MODULE: on
@@ -15,6 +15,7 @@ steps:
       from_secret: DRONE_USER
   commands:
     - export PATH=$PATH:/go
+    - ls -al
     - go test -mod=vendor -v ./...
   when:
     event: 
@@ -22,7 +23,7 @@ steps:
       - push
     branch: master
 - name: build
-  image: golang:1.12
+  image: golang:1.12.1-alpine3.9
   environment:
     GO111MODULE: on
   commands:
