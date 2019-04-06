@@ -7,6 +7,7 @@ steps:
   environment:
     TF_ACC: 1
     GO111MODULE: on
+    CGO_ENABLED: 0
     DRONE_SERVER:
       from_secret: DRONE_SERVER
     DRONE_TOKEN:
