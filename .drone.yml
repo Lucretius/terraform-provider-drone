@@ -3,7 +3,7 @@ name: default
 
 steps:
 - name: test
-  image: golang:1.10
+  image: golang:1.12
   environment:
     TF_ACC: 1
     DRONE_SERVER:
@@ -13,6 +13,7 @@ steps:
     DRONE_USER:
       from_secret: DRONE_USER
   commands:
+    - export PATH=$PATH:/go
     - go get
     - go test -v ./...
   when:
