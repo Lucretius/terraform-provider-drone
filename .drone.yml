@@ -15,7 +15,7 @@ steps:
       from_secret: DRONE_USER
   commands:
     - export PATH=$PATH:/go
-    - ls -l
+    - ls -al
     - go test -mod=vendor -v ./...
   when:
     event: 
