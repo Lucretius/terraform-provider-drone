@@ -6,6 +6,7 @@ steps:
   image: golang:1.12
   environment:
     TF_ACC: 1
+    GO111MODULE: on
     DRONE_SERVER:
       from_secret: DRONE_SERVER
     DRONE_TOKEN:
@@ -14,7 +15,6 @@ steps:
       from_secret: DRONE_USER
   commands:
     - export PATH=$PATH:/go
-    - go get
     - go test -v ./...
   when:
     event: 
@@ -23,14 +23,15 @@ steps:
     branch: master
 - name: build
   image: golang:1.12
+  environment:
+    GO111MODULE: on
   commands:
     - export PATH=$PATH:/go
-    - go get
-    - CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -o dist/linux_amd64/terraform-provider-drone_${DRONE_TAG}
-    - CGO_ENABLED=0 GOOS=linux   GOARCH=arm64 go build -o dist/linux_arm64/terraform-provider-drone_${DRONE_TAG}
-    - CGO_ENABLED=0 GOOS=linux   GOARCH=arm   go build -o dist/linux_arm/terraform-provider-drone_${DRONE_TAG}
-    - CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o dist/windows_amd64/terraform-provider-drone_${DRONE_TAG}
-    - CGO_ENABLED=0 GOOS=darwin  GOARCH=amd64 go build -o dist/darwin_amd64/terraform-provider-drone_${DRONE_TAG}
+    - CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -o dist/linux_amd64/terraform-provider-drone_${DRONE_TAG} -mod=vendor
+    - CGO_ENABLED=0 GOOS=linux   GOARCH=arm64 go build -o dist/linux_arm64/terraform-provider-drone_${DRONE_TAG} -mod=vendor
+    - CGO_ENABLED=0 GOOS=linux   GOARCH=arm   go build -o dist/linux_arm/terraform-provider-drone_${DRONE_TAG} -mod=vendor
+    - CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o dist/windows_amd64/terraform-provider-drone_${DRONE_TAG} -mod=vendor
+    - CGO_ENABLED=0 GOOS=darwin  GOARCH=amd64 go build -o dist/darwin_amd64/terraform-provider-drone_${DRONE_TAG} -mod=vendor
 
     - tar -cvzf dist/terraform-provider-drone_linux_amd64.tar.gz   -C dist/linux_amd64   terraform-provider-drone_${DRONE_TAG}
     - tar -cvzf dist/terraform-provider-drone_linux_arm64.tar.gz   -C dist/linux_arm64   terraform-provider-drone_${DRONE_TAG}
