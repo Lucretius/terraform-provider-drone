@@ -2,52 +2,53 @@ kind: pipeline
 name: default
 
 steps:
-  - name: test
-    image: golang:1.10
-    environment:
-      TF_ACC: 1
-      DRONE_SERVER:
-        from_secret: DRONE_SERVER
-      DRONE_TOKEN:
-        from_secret: DRONE_TOKEN
-      DRONE_USER:
-        from_secret: DRONE_USER
-    commands:
-      - go get
-      - go test -v ./...
-    when:
-      event: 
-        - pull_request
-        - push
+- name: test
+  image: golang:1.10
+  environment:
+    TF_ACC: 1
+    DRONE_SERVER:
+      from_secret: DRONE_SERVER
+    DRONE_TOKEN:
+      from_secret: DRONE_TOKEN
+    DRONE_USER:
+      from_secret: DRONE_USER
+  commands:
+    - go get
+    - go test -v ./...
+  when:
+    event: 
+      - pull_request
+      - push
+    branch: master
 
-  build:
-    image: golang:1.10
-    commands:
-      - go get
-      - CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -o dist/linux_amd64/terraform-provider-drone_${DRONE_TAG}
-      - CGO_ENABLED=0 GOOS=linux   GOARCH=arm64 go build -o dist/linux_arm64/terraform-provider-drone_${DRONE_TAG}
-      - CGO_ENABLED=0 GOOS=linux   GOARCH=arm   go build -o dist/linux_arm/terraform-provider-drone_${DRONE_TAG}
-      - CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o dist/windows_amd64/terraform-provider-drone_${DRONE_TAG}
-      - CGO_ENABLED=0 GOOS=darwin  GOARCH=amd64 go build -o dist/darwin_amd64/terraform-provider-drone_${DRONE_TAG}
+-name: build:
+  image: golang:1.10
+  commands:
+    - go get
+    - CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -o dist/linux_amd64/terraform-provider-drone_${DRONE_TAG}
+    - CGO_ENABLED=0 GOOS=linux   GOARCH=arm64 go build -o dist/linux_arm64/terraform-provider-drone_${DRONE_TAG}
+    - CGO_ENABLED=0 GOOS=linux   GOARCH=arm   go build -o dist/linux_arm/terraform-provider-drone_${DRONE_TAG}
+    - CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o dist/windows_amd64/terraform-provider-drone_${DRONE_TAG}
+    - CGO_ENABLED=0 GOOS=darwin  GOARCH=amd64 go build -o dist/darwin_amd64/terraform-provider-drone_${DRONE_TAG}
 
-      - tar -cvzf dist/terraform-provider-drone_linux_amd64.tar.gz   -C dist/linux_amd64   terraform-provider-drone_${DRONE_TAG}
-      - tar -cvzf dist/terraform-provider-drone_linux_arm64.tar.gz   -C dist/linux_arm64   terraform-provider-drone_${DRONE_TAG}
-      - tar -cvzf dist/terraform-provider-drone_linux_arm.tar.gz     -C dist/linux_arm     terraform-provider-drone_${DRONE_TAG}
-      - tar -cvzf dist/terraform-provider-drone_windows_amd64.tar.gz -C dist/windows_amd64 terraform-provider-drone_${DRONE_TAG}
-      - tar -cvzf dist/terraform-provider-drone_darwin_amd64.tar.gz  -C dist/darwin_amd64  terraform-provider-drone_${DRONE_TAG}
-    when:
-      event: tag
-  - name: release
-    image: plugins/github-release
-    settings:
-      checksum: 
-        - md5
-        - sha1
-        - sha256
-        - sha512
-      api_key:
-          from_secret: GITHUB_TOKEN
-      files: dist/*.tar.gz
-    when:
-      event: tag
+    - tar -cvzf dist/terraform-provider-drone_linux_amd64.tar.gz   -C dist/linux_amd64   terraform-provider-drone_${DRONE_TAG}
+    - tar -cvzf dist/terraform-provider-drone_linux_arm64.tar.gz   -C dist/linux_arm64   terraform-provider-drone_${DRONE_TAG}
+    - tar -cvzf dist/terraform-provider-drone_linux_arm.tar.gz     -C dist/linux_arm     terraform-provider-drone_${DRONE_TAG}
+    - tar -cvzf dist/terraform-provider-drone_windows_amd64.tar.gz -C dist/windows_amd64 terraform-provider-drone_${DRONE_TAG}
+    - tar -cvzf dist/terraform-provider-drone_darwin_amd64.tar.gz  -C dist/darwin_amd64  terraform-provider-drone_${DRONE_TAG}
+  when:
+    event: tag
+- name: release
+  image: plugins/github-release
+  settings:
+    checksum: 
+      - md5
+      - sha1
+      - sha256
+      - sha512
+    api_key:
+        from_secret: GITHUB_TOKEN
+    files: dist/*.tar.gz
+  when:
+    event: tag
   
