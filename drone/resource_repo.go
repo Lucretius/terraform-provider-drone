@@ -62,6 +62,11 @@ func resourceRepo() *schema.Resource {
 func resourceRepoCreate(data *schema.ResourceData, meta interface{}) error {
 	client := meta.(drone.Client)
 
+	// Refresh repository list
+	if _, err := client.RepoListSync(); err != nil {
+		return err
+	}
+
 	owner, repo, err := utils.ParseRepo(data.Get("repository").(string))
 
 	if err != nil {
