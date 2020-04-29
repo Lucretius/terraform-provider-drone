@@ -27,6 +27,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"drone_repo":   resourceRepo(),
 			"drone_secret": resourceSecret(),
+			"drone_orgsecret": resourceOrgSecret(),
 			"drone_user":   resourceUser(),
 			"drone_cron":   resourceCron(),
 		},

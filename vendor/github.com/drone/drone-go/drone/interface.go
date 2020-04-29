@@ -49,6 +49,9 @@ type Client interface {
 	// UserDelete deletes a user account.
 	UserDelete(login string) error
 
+	// Incomplete returns a list of incomplete builds.
+	Incomplete() ([]*Repo, error)
+
 	// Repo returns a repository by name.
 	Repo(namespace, name string) (*Repo, error)
 
@@ -59,6 +62,10 @@ type Client interface {
 	// RepoListSync returns a list of all repositories to which
 	// the user has explicit access in the host system.
 	RepoListSync() ([]*Repo, error)
+
+	// RepoListAll returns a list of all repositories in
+	// the database. This is only available to system admins.
+	RepoListAll(opts ListOptions) ([]*Repo, error)
 
 	// RepoEnable activates a repository.
 	RepoEnable(namespace, name string) (*Repo, error)
@@ -75,6 +82,9 @@ type Client interface {
 	// RepoDisable disables a repository.
 	RepoDisable(namespace, name string) error
 
+	// RepoDelete permanetnly deletes a repository.
+	RepoDelete(namespace, name string) error
+
 	// Build returns a repository build by number.
 	Build(namespace, name string, build int) (*Build, error)
 
@@ -86,12 +96,18 @@ type Client interface {
 	// the specified repository.
 	BuildList(namespace, name string, opts ListOptions) ([]*Build, error)
 
+	// BuildCreate creates a new build by branch or commit.
+	BuildCreate(owner, name, commit, branch string) (*Build, error)
+
 	// BuildRestart re-starts a build.
 	BuildRestart(namespace, name string, build int, params map[string]string) (*Build, error)
 
 	// BuildCancel stops the specified running job for
 	// given build.
 	BuildCancel(namespace, name string, build int) error
+
+	// BuildPurge purges the build history.
+	BuildPurge(namespace, name string, before int) error
 
 	// Approve approves a blocked build stage.
 	Approve(namespace, name string, build, stage int) error
@@ -125,6 +141,24 @@ type Client interface {
 
 	// SecretDelete deletes a secret.
 	SecretDelete(owner, name, secret string) error
+
+	// OrgSecret returns a secret by name.
+	OrgSecret(namespace, secret string) (*Secret, error)
+
+	// OrgSecretList returns a list of all repository secrets.
+	OrgSecretList(namespace string) ([]*Secret, error)
+
+	// OrgSecretListAll returns a list of all repository secrets.
+	OrgSecretListAll() ([]*Secret, error)
+
+	// OrgSecretCreate creates a registry.
+	OrgSecretCreate(namespace string, secret *Secret) (*Secret, error)
+
+	// OrgSecretUpdate updates a registry.
+	OrgSecretUpdate(namespace string, secret *Secret) (*Secret, error)
+
+	// OrgSecretDelete deletes a secret.
+	OrgSecretDelete(namespace, name string) error
 
 	// Cron returns a cronjob by name.
 	Cron(owner, name, cron string) (*Cron, error)
@@ -188,7 +222,7 @@ type Client interface {
 	ServerCreate() (*Server, error)
 
 	// ServerDelete terminates a server.
-	ServerDelete(name string) error
+	ServerDelete(name string, force bool) error
 
 	// AutoscalePause pauses the autoscaler.
 	AutoscalePause() error

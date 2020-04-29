@@ -37,6 +37,22 @@ func ParseId(str, example string) (user, repo, id string, err error) {
 	return
 }
 
+func ParseOrgId(str, example string) (organization, id string, err error) {
+	parts := strings.Split(str, "/")
+	if len(parts) < 2 {
+		err = fmt.Errorf(
+			"Error: Invalid Organization Identity (e.g. octocat/%s)",
+			example,
+			)
+		return
+	}
+
+	organization = parts[0]
+	id = strings.Join(parts[1:], "/")
+
+	return
+}
+
 func Bool(val bool) *bool {
 	return &val
 }
