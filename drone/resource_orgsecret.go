@@ -2,39 +2,40 @@ package drone
 
 import (
 	"fmt"
-	
+
 	"github.com/Lucretius/terraform-provider-drone/drone/utils"
 	"github.com/drone/drone-go/drone"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func resourceOrgSecret() *schema.Resource {
-	return &schema.Resource {
-		Schema: map[string]*schema.Schema {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
 			"namespace": {
-				Type: schema.TypeString,
+				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
 			"name": {
-				Type: schema.TypeString,
+				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
 			"value": {
-				Type: schema.TypeString,
-				Required: true,
+				Type:      schema.TypeString,
+				Required:  true,
 				Sensitive: true,
+				ForceNew:  false,
 			},
 			"allow_on_pull_request": {
-				Type: schema.TypeBool,
+				Type:     schema.TypeBool,
 				Optional: true,
-				ForceNew: true,
+				ForceNew: false,
 			},
 			"allow_push_on_pull_request": {
-				Type: schema.TypeString,
+				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
+				ForceNew: false,
 			},
 		},
 
@@ -43,14 +44,14 @@ func resourceOrgSecret() *schema.Resource {
 		},
 
 		Create: resourceOrgSecretCreate,
-		Read: resourceOrgSecretRead,
+		Read:   resourceOrgSecretRead,
 		Update: resourceOrgSecretUpdate,
 		Delete: resourceOrgSecretDelete,
 		Exists: resourceOrgSecretExists,
 	}
 }
 
-func resourceOrgSecretCreate(data *schema.ResourceData, meta interface {}) error {
+func resourceOrgSecretCreate(data *schema.ResourceData, meta interface{}) error {
 	client := meta.(drone.Client)
 
 	namespace := data.Get("namespace").(string)
@@ -128,9 +129,9 @@ func resourceOrgSecretExists(data *schema.ResourceData, meta interface{}) (bool,
 
 func createOrgSecret(data *schema.ResourceData) (secret *drone.Secret) {
 	return &drone.Secret{
-		Name: data.Get("name").(string),
-		Data: data.Get("value").(string),
-		PullRequest: data.Get("allow_on_pull_request").(bool),
+		Name:            data.Get("name").(string),
+		Data:            data.Get("value").(string),
+		PullRequest:     data.Get("allow_on_pull_request").(bool),
 		PullRequestPush: data.Get("allow_push_on_pull_request").(bool),
 	}
 }
