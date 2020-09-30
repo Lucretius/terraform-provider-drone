@@ -1,10 +1,13 @@
 package drone
 
 import (
+	"crypto/tls"
 	"fmt"
+	"net/http"
 
 	"github.com/drone/drone-go/drone"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/jackspirou/syscerts"
 	"golang.org/x/oauth2"
 )
 
@@ -25,11 +28,11 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"drone_repo":   resourceRepo(),
-			"drone_secret": resourceSecret(),
+			"drone_repo":      resourceRepo(),
+			"drone_secret":    resourceSecret(),
 			"drone_orgsecret": resourceOrgSecret(),
-			"drone_user":   resourceUser(),
-			"drone_cron":   resourceCron(),
+			"drone_user":      resourceUser(),
+			"drone_cron":      resourceCron(),
 		},
 		ConfigureFunc: providerConfigureFunc,
 	}
@@ -38,10 +41,22 @@ func Provider() *schema.Provider {
 func providerConfigureFunc(data *schema.ResourceData) (interface{}, error) {
 	config := new(oauth2.Config)
 
+	certs := syscerts.SystemRootsPool()
+	tlsConfig := &tls.Config{
+		RootCAs:            certs,
+		InsecureSkipVerify: false,
+	}
+
 	auther := config.Client(
 		oauth2.NoContext,
 		&oauth2.Token{AccessToken: data.Get("token").(string)},
 	)
+
+	trans, _ := auther.Transport.(*oauth2.Transport)
+	trans.Base = &http.Transport{
+		TLSClientConfig: tlsConfig,
+		Proxy:           http.ProxyFromEnvironment,
+	}
 
 	client := drone.NewClient(data.Get("server").(string), auther)
 

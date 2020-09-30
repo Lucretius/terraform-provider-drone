@@ -11,8 +11,8 @@ import (
 
 func TestOrgSecret(t *testing.T) {
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
-		Providers: testProviders,
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testProviders,
 		CheckDestroy: testOrgSecretDestroy,
 		Steps: []resource.TestStep{
 			{
@@ -66,7 +66,7 @@ func testOrgSecretDestroy(state *terraform.State) error {
 
 		err := client.OrgSecretDelete(namespace, name)
 		if err == nil {
-			return fmt.Errorf("namespace Secret still exists: %s/%s", namespace, name)
+			return fmt.Errorf("namespace OrgSecret still exists: %s/%s", namespace, name)
 		}
 	}
 

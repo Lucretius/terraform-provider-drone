@@ -33,7 +33,7 @@ func resourceOrgSecret() *schema.Resource {
 				ForceNew: false,
 			},
 			"allow_push_on_pull_request": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeBool,
 				Optional: true,
 				ForceNew: false,
 			},
