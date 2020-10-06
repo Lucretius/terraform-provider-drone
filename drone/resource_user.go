@@ -2,7 +2,6 @@ package drone
 
 import (
 	"fmt"
-
 	"github.com/Lucretius/terraform-provider-drone/drone/utils"
 	"github.com/drone/drone-go/drone"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -77,9 +76,8 @@ func resourceUserRead(data *schema.ResourceData, meta interface{}) error {
 	client := meta.(drone.Client)
 
 	user, err := client.User(data.Id())
-
 	if err != nil {
-		return fmt.Errorf("Unable to read user %s: %v", user.Login, err)
+		return fmt.Errorf("[ERROR] Failed to read Drone user with id: %s", data.Id())
 	}
 
 	return readUser(data, user, err)
@@ -97,8 +95,11 @@ func resourceUserExists(data *schema.ResourceData, meta interface{}) (bool, erro
 	login := data.Id()
 
 	user, err := client.User(login)
+	if err != nil {
+		return false, fmt.Errorf("[ERROR] Failed to read Drone user with id: %s", data.Id())
+	}
 
-	exists := (user.Login == login) && (err == nil)
+	exists := user.Login == login
 
 	return exists, err
 }
