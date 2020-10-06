@@ -77,7 +77,7 @@ func resourceUserRead(data *schema.ResourceData, meta interface{}) error {
 
 	user, err := client.User(data.Id())
 	if err != nil {
-		return fmt.Errorf("[ERROR] Failed to read Drone user with id: %s", data.Id())
+		return fmt.Errorf("failed to read Drone user with id: %s", data.Id())
 	}
 
 	return readUser(data, user, err)
@@ -96,7 +96,7 @@ func resourceUserExists(data *schema.ResourceData, meta interface{}) (bool, erro
 
 	user, err := client.User(login)
 	if err != nil {
-		return false, fmt.Errorf("[ERROR] Failed to read Drone user with id: %s", data.Id())
+		return false, fmt.Errorf("failed to read Drone user with id: %s", data.Id())
 	}
 
 	exists := user.Login == login

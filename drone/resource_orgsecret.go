@@ -73,7 +73,7 @@ func resourceOrgSecretRead(data *schema.ResourceData, meta interface{}) error {
 
 	secret, err := client.OrgSecret(namespace, name)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Failed to read Drone Org Secret: %s/%s", namespace, name)
+		return fmt.Errorf("failed to read Drone Org Secret: %s/%s", namespace, name)
 	}
 
 	readOrgSecret(data, namespace, secret)
@@ -119,7 +119,7 @@ func resourceOrgSecretExists(data *schema.ResourceData, meta interface{}) (bool,
 
 	secret, err := client.OrgSecret(namespace, name)
 	if err != nil {
-		return false, fmt.Errorf("[ERROR] Failed to read Drone Org Secret: %s/%s", namespace, name)
+		return false, fmt.Errorf("failed to read Drone Org Secret: %s/%s", namespace, name)
 	}
 
 	exists := (secret.Name == name) && (err == nil)

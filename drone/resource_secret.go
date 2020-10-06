@@ -78,7 +78,7 @@ func resourceSecretRead(data *schema.ResourceData, meta interface{}) error {
 
 	secret, err := client.Secret(owner, repo, name)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Failed to read Drone Secret: %s/%s/%s", owner, repo, name)
+		return fmt.Errorf("failed to read Drone Secret: %s/%s/%s", owner, repo, name)
 	}
 
 	return readSecret(data, owner, repo, secret, err)
@@ -123,7 +123,7 @@ func resourceSecretExists(data *schema.ResourceData, meta interface{}) (bool, er
 
 	secret, err := client.Secret(owner, repo, name)
 	if err != nil {
-		return false, fmt.Errorf("[ERROR] Failed to read Drone Secret: %s/%s/%s", owner, repo, name)
+		return false, fmt.Errorf("failed to read Drone Secret: %s/%s/%s", owner, repo, name)
 	}
 
 	exists := secret.Name == name

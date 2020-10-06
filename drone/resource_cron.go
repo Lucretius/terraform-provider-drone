@@ -99,7 +99,7 @@ func resourceCronRead(data *schema.ResourceData, meta interface{}) error {
 	cronName := data.Get("name").(string)
 	cron, err := client.Cron(owner, repo, cronName)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Failed to read Drone Cron: %s/%s/%s", owner, repo, cronName)
+		return fmt.Errorf("failed to read Drone Cron: %s/%s/%s", owner, repo, cronName)
 	}
 
 	return readCron(data, cron, owner, repo, err)
@@ -142,10 +142,10 @@ func resourceCronExists(data *schema.ResourceData, meta interface{}) (bool, erro
 	cronName := data.Get("name").(string)
 	cron, err := client.Cron(owner, repo, cronName)
 	if err != nil {
-		return false, fmt.Errorf("[ERROR] Failed to read Drone Cron: %s/%s/%s", owner, repo, cronName)
+		return false, fmt.Errorf("failed to read Drone Cron: %s/%s/%s", owner, repo, cronName)
 	}
 
-	exists := (cron.Name == cronName) && (err == nil)
+	exists := cron.Name == cronName
 	return exists, err
 }
 

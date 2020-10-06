@@ -105,7 +105,7 @@ func resourceRepoRead(data *schema.ResourceData, meta interface{}) error {
 
 	repository, err := client.Repo(owner, repo)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Failed to read Drone Repo: %s/%s", owner, repo)
+		return fmt.Errorf("failed to read Drone Repo: %s/%s", owner, repo)
 	}
 
 	return readRepo(data, repository, err)
@@ -148,7 +148,7 @@ func resourceRepoExists(data *schema.ResourceData, meta interface{}) (bool, erro
 
 	repository, err := client.Repo(owner, repo)
 	if err != nil {
-		return false, fmt.Errorf("[ERROR] Failed to read Drone Repo: %s/%s", owner, repo)
+		return false, fmt.Errorf("failed to read Drone Repo: %s/%s", owner, repo)
 	}
 
 	exists := (repository.Namespace == owner) && (repository.Name == repo)
